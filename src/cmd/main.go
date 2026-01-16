@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/infrastructure/http"
 )
 
 func main() {
-	fmt.Println("Hello World!")
+	server := http.NewServer()
+	server.Start()
 }
