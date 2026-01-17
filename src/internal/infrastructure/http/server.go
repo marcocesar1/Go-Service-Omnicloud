@@ -27,6 +27,7 @@ func (s *Server) Start() {
 
 	peopleRoutes := routes.NewPeopleRoutes(&routes.PeopleRoutesInput{
 		CreatePeopleUseCase: s.appContainer.CreatePeopleUseCase,
+		GetPeopleUseCase:    s.appContainer.GetPeopleUseCase,
 	})
 
 	defaultRoutes := routes.NewDefaultRoutes()

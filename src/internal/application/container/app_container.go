@@ -17,6 +17,7 @@ type AppContainer struct {
 
 	// Use cases
 	CreatePeopleUseCase *people.CreatePeopleUseCase
+	GetPeopleUseCase    *people.GetPeopleUseCase
 }
 
 func NewAppContainer(mongoUrl string) *AppContainer {
@@ -33,11 +34,13 @@ func NewAppContainer(mongoUrl string) *AppContainer {
 
 	// Use cases
 	createPeopleUseCase := people.NewPeopleUseCase(peopleRepo)
+	getPeopleUseCase := people.NewGetPeopleUseCase(peopleRepo)
 
 	return &AppContainer{
 		Mongo:               mongo,
 		PeopleRepository:    peopleRepo,
 		CreatePeopleUseCase: createPeopleUseCase,
+		GetPeopleUseCase:    getPeopleUseCase,
 	}
 }
 

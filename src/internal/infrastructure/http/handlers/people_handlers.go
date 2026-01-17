@@ -24,9 +24,24 @@ func (p *PeopleHandlers) FindOne() func(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func (p *PeopleHandlers) FindAll() func(w http.ResponseWriter, r *http.Request) {
+func (p *PeopleHandlers) FindAll(usecase *people.GetPeopleUseCase) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("FindAll"))
+
+		w.Header().Set("Content-Type", "application/json")
+
+		people, err := usecase.Execute()
+		if err != nil {
+			message := fmt.Sprintf("error finding people: %s", err.Error())
+
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(map[string]any{
+				"message": message,
+			})
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(people)
 	}
 }
 
