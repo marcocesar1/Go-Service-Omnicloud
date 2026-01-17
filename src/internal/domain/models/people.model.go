@@ -2,6 +2,8 @@ package models
 
 import (
 	"time"
+
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type PeopleStatus string
@@ -12,11 +14,11 @@ const (
 )
 
 type People struct {
-	ID        string       `json:"id" `
-	Name      string       `json:"name"`
-	Email     string       `json:"email"`
-	Place     string       `json:"place"`
-	Status    PeopleStatus `json:"status"`
-	CreatedAt time.Time    `json:"created_at"`
-	UpdatedAt time.Time    `json:"updated_at"`
+	ID        bson.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+	Name      string        `json:"name" bson:"name,omitempty"`
+	Email     string        `json:"email" bson:"email,omitempty"`
+	Place     string        `json:"place" bson:"place,omitempty"`
+	Status    PeopleStatus  `json:"status" bson:"status,omitempty"`
+	CreatedAt time.Time     `json:"created_at" bson:"created_at,omitempty"`
+	UpdatedAt time.Time     `json:"updated_at" bson:"updated_at,omitempty"`
 }

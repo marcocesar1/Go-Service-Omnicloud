@@ -13,6 +13,7 @@ import (
 type MongoConfig struct {
 	DbUrl  string
 	client *mongo.Client
+	db     *mongo.Database
 }
 
 func NewMongoConfig(dbUrl string) *MongoConfig {
@@ -51,10 +52,14 @@ func (m *MongoConfig) Disconnect() error {
 }
 
 func (m *MongoConfig) CreateCollections() {
-	database := m.client.Database("admin")
+	m.db = m.client.Database("admin")
 
-	err := database.CreateCollection(context.TODO(), "people")
+	err := m.db.CreateCollection(context.TODO(), "people")
 	if err != nil {
 		log.Fatalf("Failed to create people collection: %v", err)
 	}
+}
+
+func (m *MongoConfig) GetDatabase() *mongo.Database {
+	return m.db
 }
