@@ -9,7 +9,7 @@ import (
 type DefaultRoutes struct {
 }
 
-func CreateDefaultRoutes() *DefaultRoutes {
+func NewDefaultRoutes() *DefaultRoutes {
 	return &DefaultRoutes{}
 }
 

@@ -7,23 +7,29 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
+	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/application/container"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/infrastructure/http/routes"
 )
 
 type Server struct {
-	router *chi.Mux
+	router       *chi.Mux
+	appContainer *container.AppContainer
 }
 
-func NewServer() *Server {
+func NewServer(app *container.AppContainer) *Server {
 	return &Server{
-		router: chi.NewRouter(),
+		appContainer: app,
+		router:       chi.NewRouter(),
 	}
 }
 
 func (s *Server) Start() {
 
-	peopleRoutes := routes.CreatePeopleRoutes()
-	defaultRoutes := routes.CreateDefaultRoutes()
+	peopleRoutes := routes.NewPeopleRoutes(&routes.PeopleRoutesInput{
+		CreatePeopleUseCase: s.appContainer.CreatePeopleUseCase,
+	})
+
+	defaultRoutes := routes.NewDefaultRoutes()
 
 	s.router.Use(middleware.Logger)
 
