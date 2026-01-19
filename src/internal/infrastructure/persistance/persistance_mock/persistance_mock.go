@@ -13,46 +13,49 @@ const TEST_ID1 = "5f8d9f1e2d862c0008e7b2f0"
 const TEST_ID2 = "5f8d9f1e2d862c0008e7b2f1"
 const TEST_ID4 = "5f8d9f1e2d862c0008e7b2f4"
 
+var id1, _ = bson.ObjectIDFromHex(TEST_ID1)
+var id2, _ = bson.ObjectIDFromHex(TEST_ID2)
+var id4, _ = bson.ObjectIDFromHex(TEST_ID4)
+
+var PeopleData = []models.People{
+	{
+		ID:        id1,
+		Name:      "John Doe",
+		Email:     "johndoe@example.com",
+		Place:     "New York",
+		Status:    models.StatusOut,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	},
+	{
+		ID:        id2,
+		Name:      "Jane Doe",
+		Email:     "janedoe@example.com",
+		Place:     "New York",
+		Status:    models.StatusOut,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	},
+	{
+		ID:        id4,
+		Name:      "John Doe",
+		Email:     "johndoe33@example.com",
+		Place:     "New York",
+		Status:    models.StatusIn,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	},
+}
+
 type PeopleRepositoryMock struct {
 	Error  error
 	People []models.People
 }
 
 func NewPeopleRepositoryMock() *PeopleRepositoryMock {
-	id1, _ := bson.ObjectIDFromHex(TEST_ID1)
-	id2, _ := bson.ObjectIDFromHex(TEST_ID2)
-	id4, _ := bson.ObjectIDFromHex(TEST_ID4)
 
 	return &PeopleRepositoryMock{
-		People: []models.People{
-			{
-				ID:        id1,
-				Name:      "John Doe",
-				Email:     "johndoe@example.com",
-				Place:     "New York",
-				Status:    models.StatusOut,
-				CreatedAt: time.Now(),
-				UpdatedAt: time.Now(),
-			},
-			{
-				ID:        id2,
-				Name:      "Jane Doe",
-				Email:     "janedoe@example.com",
-				Place:     "New York",
-				Status:    models.StatusOut,
-				CreatedAt: time.Now(),
-				UpdatedAt: time.Now(),
-			},
-			{
-				ID:        id4,
-				Name:      "John Doe",
-				Email:     "johndoe33@example.com",
-				Place:     "New York",
-				Status:    models.StatusIn,
-				CreatedAt: time.Now(),
-				UpdatedAt: time.Now(),
-			},
-		}}
+		People: PeopleData}
 }
 
 func (pm *PeopleRepositoryMock) Create(people *models.People) error {
@@ -127,4 +130,8 @@ func (pm *PeopleRepositoryMock) Update(person *models.People) error {
 	}
 
 	return nil
+}
+
+func (pm *PeopleRepositoryMock) Reset() {
+	pm.People = PeopleData
 }
