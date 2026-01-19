@@ -12,6 +12,7 @@ import (
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/models"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/repositories"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/validations"
+	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/infrastructure/http/responses"
 )
 
 type PeopleHandlers struct {
@@ -25,37 +26,25 @@ func (p *PeopleHandlers) FindOne(usecase *people.GetOnePeopleUseCase) func(w htt
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := chi.URLParam(r, "id")
 
-		w.Header().Set("Content-Type", "application/json")
-
 		people, err := usecase.Execute(id)
 		if err != nil {
 			if errors.Is(err, domain_err.ErrNotFound) {
 				message := fmt.Sprintf("people with id %s not found", id)
-				w.WriteHeader(http.StatusNotFound)
-				json.NewEncoder(w).Encode(map[string]any{
-					"message": message,
-				})
+				responses.ErrorResponse(w, message, http.StatusNotFound)
 				return
 			}
 
 			message := fmt.Sprintf("error finding people: %s", err.Error())
-			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(map[string]any{
-				"message": message,
-			})
+			responses.ErrorResponse(w, message, http.StatusInternalServerError)
 			return
 		}
 
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(people)
+		responses.SuccessResponse(w, people, http.StatusOK)
 	}
 }
 
 func (p *PeopleHandlers) FindAll(usecase *people.GetPeopleUseCase) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-
-		w.Header().Set("Content-Type", "application/json")
-
 		query := r.URL.Query()
 		status := query.Get("status")
 
@@ -64,81 +53,57 @@ func (p *PeopleHandlers) FindAll(usecase *people.GetPeopleUseCase) func(w http.R
 		})
 		if err != nil {
 			message := fmt.Sprintf("error finding people: %s", err.Error())
-
-			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(map[string]any{
-				"message": message,
-			})
+			responses.ErrorResponse(w, message, http.StatusInternalServerError)
 			return
 		}
 
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(people)
+		responses.SuccessResponse(w, people, http.StatusOK)
 	}
 }
 
 func (p *PeopleHandlers) Create(usecase *people.CreatePeopleUseCase) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-
-		w.Header().Set("Content-Type", "application/json")
-
 		var people models.People
 		err := json.NewDecoder(r.Body).Decode(&people)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
 			message := fmt.Sprintf("error decoding request body: %s", err.Error())
-			json.NewEncoder(w).Encode(map[string]any{
-				"message": message,
-			})
+			responses.ErrorResponse(w, message, http.StatusBadRequest)
 			return
 		}
 
 		err = validations.ValidatePeople(&people)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(map[string]any{
-				"message": err.Error(),
-			})
+			message := err.Error()
+			responses.ErrorResponse(w, message, http.StatusBadRequest)
 			return
 		}
 
 		err = usecase.Execute(&people)
 		if err != nil {
 			if errors.Is(err, domain_err.DuplicatedEmail) {
-				w.WriteHeader(http.StatusConflict)
 				message := fmt.Sprintf("email %s already exists", people.Email)
-				json.NewEncoder(w).Encode(map[string]any{
-					"message": message,
-				})
+				responses.ErrorResponse(w, message, http.StatusConflict)
 				return
 			}
 
 			message := fmt.Sprintf("error creating person: %s", err.Error())
-			json.NewEncoder(w).Encode(map[string]any{
-				"message": message,
-			})
+			responses.ErrorResponse(w, message, http.StatusInternalServerError)
 			return
 		}
 
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(people)
+		responses.SuccessResponse(w, people, http.StatusCreated)
 	}
 }
 
 func (p *PeopleHandlers) PatchStatus(usecase *people.UpdateStatusPeopleUseCase) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-
 		id := chi.URLParam(r, "id")
 
 		var people models.People
 		err := json.NewDecoder(r.Body).Decode(&people)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
 			message := fmt.Sprintf("error decoding request body: %s", err.Error())
-			json.NewEncoder(w).Encode(map[string]any{
-				"message": message,
-			})
+			responses.ErrorResponse(w, message, http.StatusBadRequest)
 			return
 		}
 
@@ -146,43 +111,32 @@ func (p *PeopleHandlers) PatchStatus(usecase *people.UpdateStatusPeopleUseCase) 
 		if err != nil {
 			if errors.Is(err, domain_err.ErrNotFound) {
 				message := fmt.Sprintf("people with id %s not found", id)
-				w.WriteHeader(http.StatusNotFound)
-				json.NewEncoder(w).Encode(map[string]any{
-					"message": message,
-				})
+				responses.ErrorResponse(w, message, http.StatusNotFound)
 				return
 			}
 
 			if errors.Is(err, domain_err.InvalidStatus) {
 				message := "invalid status, valid statuses [IN, OUT]"
-				w.WriteHeader(http.StatusBadRequest)
-				json.NewEncoder(w).Encode(map[string]any{
-					"message": message,
-				})
+				responses.ErrorResponse(w, message, http.StatusBadRequest)
 				return
 			}
 
 			if errors.Is(err, domain_err.StatusIsTheSame) {
-				w.WriteHeader(http.StatusConflict)
-				json.NewEncoder(w).Encode(map[string]any{
-					"message": err.Error(),
-				})
+				message := err.Error()
+				responses.ErrorResponse(w, message, http.StatusConflict)
 				return
 			}
 
 			message := fmt.Sprintf("error updating people: %s", err.Error())
-			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(map[string]any{
-				"message": message,
-			})
+			responses.ErrorResponse(w, message, http.StatusInternalServerError)
 			return
 		}
 
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(map[string]any{
+		data := map[string]any{
 			"id":         peopleUpd.ID,
 			"status":     peopleUpd.Status,
 			"updated_at": peopleUpd.UpdatedAt,
-		})
+		}
+		responses.SuccessResponse(w, data, http.StatusOK)
 	}
 }
