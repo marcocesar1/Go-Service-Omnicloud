@@ -9,14 +9,17 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
+const TEST_ID1 = "5f8d9f1e2d862c0008e7b2f0"
+const TEST_ID2 = "5f8d9f1e2d862c0008e7b2f1"
+
 type PeopleRepositoryMock struct {
 	Error  error
 	People []models.People
 }
 
 func NewPeopleRepositoryMock() *PeopleRepositoryMock {
-	id1, _ := bson.ObjectIDFromHex("5f8d9f1e2d862c0008e7b2f0")
-	id2, _ := bson.ObjectIDFromHex("5f8d9f1e2d862c0008e7b2f1")
+	id1, _ := bson.ObjectIDFromHex(TEST_ID1)
+	id2, _ := bson.ObjectIDFromHex(TEST_ID2)
 
 	return &PeopleRepositoryMock{
 		People: []models.People{
@@ -67,13 +70,18 @@ func (pm *PeopleRepositoryMock) FindOne(id string) (models.People, error) {
 		return models.People{}, pm.Error
 	}
 
+	_, err := bson.ObjectIDFromHex(id)
+	if err != nil {
+		return models.People{}, domain_err.ErrInvalidObjectId
+	}
+
 	for _, p := range pm.People {
 		if p.ID.Hex() == id {
 			return p, nil
 		}
 	}
 
-	return models.People{}, nil
+	return models.People{}, domain_err.ErrNotFound
 }
 
 func (pm *PeopleRepositoryMock) FindAll(filters *repositories.FindAllPeopleFilter) ([]models.People, error) {
