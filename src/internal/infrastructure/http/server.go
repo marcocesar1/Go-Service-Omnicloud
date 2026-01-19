@@ -26,9 +26,10 @@ func NewServer(app *container.AppContainer) *Server {
 func (s *Server) Start() {
 
 	peopleRoutes := routes.NewPeopleRoutes(&routes.PeopleRoutesInput{
-		CreatePeopleUseCase: s.appContainer.CreatePeopleUseCase,
-		GetPeopleUseCase:    s.appContainer.GetPeopleUseCase,
-		GetOnePeopleUseCase: s.appContainer.GetOnePeopleUseCase,
+		CreatePeopleUseCase:       s.appContainer.CreatePeopleUseCase,
+		GetPeopleUseCase:          s.appContainer.GetPeopleUseCase,
+		GetOnePeopleUseCase:       s.appContainer.GetOnePeopleUseCase,
+		UpdateStatusPeopleUseCase: s.appContainer.UpdateStatusPeopleUseCase,
 	})
 
 	defaultRoutes := routes.NewDefaultRoutes()

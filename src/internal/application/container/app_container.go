@@ -16,9 +16,10 @@ type AppContainer struct {
 	PeopleRepository repositories.PeopleRepository
 
 	// Use cases
-	CreatePeopleUseCase *people.CreatePeopleUseCase
-	GetPeopleUseCase    *people.GetPeopleUseCase
-	GetOnePeopleUseCase *people.GetOnePeopleUseCase
+	CreatePeopleUseCase       *people.CreatePeopleUseCase
+	GetPeopleUseCase          *people.GetPeopleUseCase
+	GetOnePeopleUseCase       *people.GetOnePeopleUseCase
+	UpdateStatusPeopleUseCase *people.UpdateStatusPeopleUseCase
 }
 
 func NewAppContainer(mongoUrl string) *AppContainer {
@@ -37,13 +38,15 @@ func NewAppContainer(mongoUrl string) *AppContainer {
 	createPeopleUseCase := people.NewPeopleUseCase(peopleRepo)
 	getPeopleUseCase := people.NewGetPeopleUseCase(peopleRepo)
 	getOnePeopleUseCase := people.NewGetOnePeopleUseCase(peopleRepo)
+	updateStatusPeopleUseCase := people.NewPeopleUpdateStatusUseCase(peopleRepo)
 
 	return &AppContainer{
-		Mongo:               mongo,
-		PeopleRepository:    peopleRepo,
-		CreatePeopleUseCase: createPeopleUseCase,
-		GetPeopleUseCase:    getPeopleUseCase,
-		GetOnePeopleUseCase: getOnePeopleUseCase,
+		Mongo:                     mongo,
+		PeopleRepository:          peopleRepo,
+		CreatePeopleUseCase:       createPeopleUseCase,
+		GetPeopleUseCase:          getPeopleUseCase,
+		GetOnePeopleUseCase:       getOnePeopleUseCase,
+		UpdateStatusPeopleUseCase: updateStatusPeopleUseCase,
 	}
 }
 

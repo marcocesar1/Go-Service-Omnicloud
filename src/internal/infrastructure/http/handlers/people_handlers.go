@@ -109,8 +109,64 @@ func (p *PeopleHandlers) Create(usecase *people.CreatePeopleUseCase) func(w http
 	}
 }
 
-func (p *PeopleHandlers) Patch() func(w http.ResponseWriter, r *http.Request) {
+func (p *PeopleHandlers) PatchStatus(usecase *people.UpdateStatusPeopleUseCase) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Update"))
+		w.Header().Set("Content-Type", "application/json")
+
+		id := chi.URLParam(r, "id")
+
+		var people models.People
+		err := json.NewDecoder(r.Body).Decode(&people)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			message := fmt.Sprintf("error decoding request body: %s", err.Error())
+			json.NewEncoder(w).Encode(map[string]any{
+				"message": message,
+			})
+			return
+		}
+
+		peopleUpd, err := usecase.Execute(id, people.Status)
+		if err != nil {
+			if errors.Is(err, domain_err.ErrNotFound) {
+				message := fmt.Sprintf("people with id %s not found", id)
+				w.WriteHeader(http.StatusNotFound)
+				json.NewEncoder(w).Encode(map[string]any{
+					"message": message,
+				})
+				return
+			}
+
+			if errors.Is(err, domain_err.InvalidStatus) {
+				message := "invalid status, valid statuses [IN, OUT]"
+				w.WriteHeader(http.StatusBadRequest)
+				json.NewEncoder(w).Encode(map[string]any{
+					"message": message,
+				})
+				return
+			}
+
+			if errors.Is(err, domain_err.StatusIsTheSame) {
+				w.WriteHeader(http.StatusConflict)
+				json.NewEncoder(w).Encode(map[string]any{
+					"message": err.Error(),
+				})
+				return
+			}
+
+			message := fmt.Sprintf("error updating people: %s", err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(map[string]any{
+				"message": message,
+			})
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]any{
+			"id":         peopleUpd.ID,
+			"status":     peopleUpd.Status,
+			"updated_at": peopleUpd.UpdatedAt,
+		})
 	}
 }
