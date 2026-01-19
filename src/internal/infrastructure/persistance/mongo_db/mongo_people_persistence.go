@@ -7,6 +7,7 @@ import (
 
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/domain_err"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/models"
+	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/repositories"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -47,12 +48,16 @@ func (p MongoPeoplePersistence) FindOne(id string) (models.People, error) {
 	return people, nil
 }
 
-func (p MongoPeoplePersistence) FindAll() ([]models.People, error) {
+func (p MongoPeoplePersistence) FindAll(filters *repositories.FindAllPeopleFilter) ([]models.People, error) {
 	collection := p.database.Collection(p.collectionName)
 
 	var people []models.People
 
 	filter := bson.M{}
+
+	if filters.Status != "" {
+		filter["status"] = filters.Status
+	}
 
 	cursor, err := collection.Find(context.TODO(), filter)
 	if err != nil {

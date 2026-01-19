@@ -10,6 +10,7 @@ import (
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/application/usecases/people"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/domain_err"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/models"
+	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/repositories"
 )
 
 type PeopleHandlers struct {
@@ -54,7 +55,12 @@ func (p *PeopleHandlers) FindAll(usecase *people.GetPeopleUseCase) func(w http.R
 
 		w.Header().Set("Content-Type", "application/json")
 
-		people, err := usecase.Execute()
+		query := r.URL.Query()
+		status := query.Get("status")
+
+		people, err := usecase.Execute(&repositories.FindAllPeopleFilter{
+			Status: status,
+		})
 		if err != nil {
 			message := fmt.Sprintf("error finding people: %s", err.Error())
 

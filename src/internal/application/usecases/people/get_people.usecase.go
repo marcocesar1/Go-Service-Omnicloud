@@ -15,6 +15,6 @@ func NewGetPeopleUseCase(repo repositories.PeopleRepository) *GetPeopleUseCase {
 	}
 }
 
-func (g *GetPeopleUseCase) Execute() ([]models.People, error) {
-	return g.peopleRepository.FindAll()
+func (g *GetPeopleUseCase) Execute(filters *repositories.FindAllPeopleFilter) ([]models.People, error) {
+	return g.peopleRepository.FindAll(filters)
 }
