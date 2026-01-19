@@ -1,10 +1,8 @@
 package models
 
 import (
-	"slices"
 	"time"
 
-	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/domain_err"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
@@ -25,16 +23,4 @@ type People struct {
 	Status    PeopleStatus  `json:"status" bson:"status,omitempty"`
 	CreatedAt time.Time     `json:"created_at" bson:"created_at,omitempty"`
 	UpdatedAt time.Time     `json:"updated_at" bson:"updated_at,omitempty"`
-}
-
-func ValidateStatus(status PeopleStatus) error {
-	validStatuses := []PeopleStatus{
-		StatusIn,
-		StatusOut,
-	}
-	if !slices.Contains(validStatuses, status) {
-		return domain_err.InvalidStatus
-	}
-
-	return nil
 }

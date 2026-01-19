@@ -6,6 +6,7 @@ import (
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/domain_err"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/models"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/repositories"
+	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/validations"
 )
 
 type UpdateStatusPeopleUseCase struct {
@@ -26,7 +27,7 @@ func (u *UpdateStatusPeopleUseCase) Execute(id string, status models.PeopleStatu
 		return nil, err
 	}
 
-	err = models.ValidateStatus(status)
+	err = validations.ValidateStatus(status)
 	if err != nil {
 		return nil, err
 	}

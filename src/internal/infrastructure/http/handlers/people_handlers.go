@@ -11,6 +11,7 @@ import (
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/domain_err"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/models"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/repositories"
+	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/validations"
 )
 
 type PeopleHandlers struct {
@@ -88,6 +89,15 @@ func (p *PeopleHandlers) Create(usecase *people.CreatePeopleUseCase) func(w http
 			message := fmt.Sprintf("error decoding request body: %s", err.Error())
 			json.NewEncoder(w).Encode(map[string]any{
 				"message": message,
+			})
+			return
+		}
+
+		err = validations.ValidatePeople(&people)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]any{
+				"message": err.Error(),
 			})
 			return
 		}
