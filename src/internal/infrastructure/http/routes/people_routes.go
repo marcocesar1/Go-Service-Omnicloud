@@ -3,7 +3,7 @@ package routes
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/application/usecases/people"
-	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/infrastructure/http/handlers"
+	handlers "github.com/marcocesar1/Go-Service-Omnicloud/src/internal/infrastructure/http/handlers/people"
 )
 
 type PeopleRoutesInput struct {
