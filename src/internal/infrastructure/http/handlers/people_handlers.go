@@ -105,7 +105,7 @@ func (p *PeopleHandlers) Create(usecase *people.CreatePeopleUseCase) func(w http
 		err = usecase.Execute(&people)
 		if err != nil {
 			if errors.Is(err, domain_err.DuplicatedEmail) {
-				w.WriteHeader(http.StatusBadRequest)
+				w.WriteHeader(http.StatusConflict)
 				message := fmt.Sprintf("email %s already exists", people.Email)
 				json.NewEncoder(w).Encode(map[string]any{
 					"message": message,
