@@ -11,6 +11,7 @@ import (
 
 const TEST_ID1 = "5f8d9f1e2d862c0008e7b2f0"
 const TEST_ID2 = "5f8d9f1e2d862c0008e7b2f1"
+const TEST_ID4 = "5f8d9f1e2d862c0008e7b2f4"
 
 type PeopleRepositoryMock struct {
 	Error  error
@@ -20,6 +21,7 @@ type PeopleRepositoryMock struct {
 func NewPeopleRepositoryMock() *PeopleRepositoryMock {
 	id1, _ := bson.ObjectIDFromHex(TEST_ID1)
 	id2, _ := bson.ObjectIDFromHex(TEST_ID2)
+	id4, _ := bson.ObjectIDFromHex(TEST_ID4)
 
 	return &PeopleRepositoryMock{
 		People: []models.People{
@@ -41,6 +43,15 @@ func NewPeopleRepositoryMock() *PeopleRepositoryMock {
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
 			},
+			{
+				ID:        id4,
+				Name:      "John Doe",
+				Email:     "johndoe33@example.com",
+				Place:     "New York",
+				Status:    models.StatusIn,
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
+			},
 		}}
 }
 
@@ -57,6 +68,7 @@ func (pm *PeopleRepositoryMock) Create(people *models.People) error {
 	}
 
 	people.ID = bson.NewObjectID()
+	people.Status = models.StatusOut
 	people.CreatedAt = time.Now()
 	people.UpdatedAt = time.Now()
 
@@ -87,6 +99,16 @@ func (pm *PeopleRepositoryMock) FindOne(id string) (models.People, error) {
 func (pm *PeopleRepositoryMock) FindAll(filters *repositories.FindAllPeopleFilter) ([]models.People, error) {
 	if pm.Error != nil {
 		return nil, pm.Error
+	}
+
+	if filters.Status != "" {
+		filteredPeople := []models.People{}
+		for _, p := range pm.People {
+			if string(p.Status) == filters.Status {
+				filteredPeople = append(filteredPeople, p)
+			}
+		}
+		return filteredPeople, nil
 	}
 
 	return pm.People, nil
