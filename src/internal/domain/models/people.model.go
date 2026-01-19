@@ -15,6 +15,8 @@ const (
 	StatusOut PeopleStatus = "OUT"
 )
 
+const DefaultPeopleStatus = "UNKNOWN"
+
 type People struct {
 	ID        bson.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
 	Name      string        `json:"name" bson:"name,omitempty"`

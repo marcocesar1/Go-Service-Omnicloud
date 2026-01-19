@@ -5,6 +5,7 @@ import (
 
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/application/usecases/people"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/repositories"
+	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/infrastructure/city"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/infrastructure/persistance/mongo_db"
 )
 
@@ -34,8 +35,11 @@ func NewAppContainer(mongoUrl string) *AppContainer {
 	// Repositories
 	peopleRepo := mongo_db.NewMongoPeoplePersistence(mongo.GetDatabase())
 
+	// Services
+	cityService := city.NewRandomCityApi()
+
 	// Use cases
-	createPeopleUseCase := people.NewPeopleUseCase(peopleRepo)
+	createPeopleUseCase := people.NewPeopleUseCase(peopleRepo, cityService)
 	getPeopleUseCase := people.NewGetPeopleUseCase(peopleRepo)
 	getOnePeopleUseCase := people.NewGetOnePeopleUseCase(peopleRepo)
 	updateStatusPeopleUseCase := people.NewPeopleUpdateStatusUseCase(peopleRepo)
