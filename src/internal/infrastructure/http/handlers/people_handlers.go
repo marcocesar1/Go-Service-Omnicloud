@@ -11,7 +11,6 @@ import (
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/domain_err"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/models"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/repositories"
-	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/validations"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/infrastructure/http/responses"
 )
 
@@ -71,15 +70,14 @@ func (p *PeopleHandlers) Create(usecase *people.CreatePeopleUseCase) func(w http
 			return
 		}
 
-		err = validations.ValidatePeople(&people)
-		if err != nil {
-			message := err.Error()
-			responses.ErrorResponse(w, message, http.StatusBadRequest)
-			return
-		}
-
 		err = usecase.Execute(&people)
 		if err != nil {
+			if errors.Is(err, domain_err.InvalidPeopleField) {
+				message := err.Error()
+				responses.ErrorResponse(w, message, http.StatusBadRequest)
+				return
+			}
+
 			if errors.Is(err, domain_err.DuplicatedEmail) {
 				message := fmt.Sprintf("email %s already exists", people.Email)
 				responses.ErrorResponse(w, message, http.StatusConflict)

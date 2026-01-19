@@ -2,12 +2,12 @@ package people
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/domain_err"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/models"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/repositories"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/services"
+	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/validations"
 )
 
 type CreatePeopleUseCase struct {
@@ -23,12 +23,17 @@ func NewPeopleUseCase(repo repositories.PeopleRepository, cityService services.C
 }
 
 func (c *CreatePeopleUseCase) Execute(people *models.People) error {
+	err := validations.ValidatePeople(people)
+	if err != nil {
+		return err
+	}
+
 	city := c.getCity()
 
 	people.Place = city
 	people.Status = models.StatusOut
 
-	err := c.peopleRepository.Create(people)
+	err = c.peopleRepository.Create(people)
 	if err != nil {
 		if errors.Is(err, domain_err.ErrDuplicatedDoc) {
 			return domain_err.DuplicatedEmail
@@ -43,7 +48,7 @@ func (c *CreatePeopleUseCase) Execute(people *models.People) error {
 func (c *CreatePeopleUseCase) getCity() string {
 	city, error := c.cityService.GetCityName()
 	if error != nil {
-		fmt.Printf("Error getting city name: %s", error.Error())
+		// fmt.Printf("Error getting city name: %s", error.Error())
 
 		return models.DefaultPeopleStatus
 	}

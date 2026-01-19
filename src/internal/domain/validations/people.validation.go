@@ -22,19 +22,19 @@ func ValidateStatus(status models.PeopleStatus) error {
 
 func ValidatePeople(people *models.People) error {
 	if people.Name == "" {
-		return domain_err.InvalidPeopleFieldError("email field is required")
+		return domain_err.InvalidPeopleFieldError(domain_err.ErrNameRequired)
 	}
 
 	if len(people.Name) < 3 || len(people.Name) > 80 {
-		return domain_err.InvalidPeopleFieldError("name field must be between 3 and 80 characters")
+		return domain_err.InvalidPeopleFieldError(domain_err.ErrNameInvalidLength)
 	}
 
 	if people.Email == "" {
-		return domain_err.InvalidPeopleFieldError("email field is required")
+		return domain_err.InvalidPeopleFieldError(domain_err.ErrEmailRequired)
 	}
 
 	if !isEmailValid(people.Email) {
-		return domain_err.InvalidPeopleFieldError("email field format is invalid")
+		return domain_err.InvalidPeopleFieldError(domain_err.ErrEmailInvalid)
 	}
 
 	return nil
