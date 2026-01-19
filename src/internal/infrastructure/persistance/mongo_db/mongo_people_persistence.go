@@ -38,6 +38,9 @@ func (p MongoPeoplePersistence) FindOne(id string) (models.People, error) {
 
 	err = collection.FindOne(context.TODO(), filter).Decode(&people)
 	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return people, domain_err.ErrNotFound
+		}
 		return people, err
 	}
 

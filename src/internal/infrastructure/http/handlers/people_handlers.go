@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/application/usecases/people"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/domain_err"
 	"github.com/marcocesar1/Go-Service-Omnicloud/src/internal/domain/models"
@@ -18,9 +19,33 @@ func CreatePeopleHandlers() *PeopleHandlers {
 	return &PeopleHandlers{}
 }
 
-func (p *PeopleHandlers) FindOne() func(w http.ResponseWriter, r *http.Request) {
+func (p *PeopleHandlers) FindOne(usecase *people.GetOnePeopleUseCase) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("FindOne"))
+		id := chi.URLParam(r, "id")
+
+		w.Header().Set("Content-Type", "application/json")
+
+		people, err := usecase.Execute(id)
+		if err != nil {
+			if errors.Is(err, domain_err.ErrNotFound) {
+				message := fmt.Sprintf("people with id %s not found", id)
+				w.WriteHeader(http.StatusNotFound)
+				json.NewEncoder(w).Encode(map[string]any{
+					"message": message,
+				})
+				return
+			}
+
+			message := fmt.Sprintf("error finding people: %s", err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(map[string]any{
+				"message": message,
+			})
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(people)
 	}
 }
 
