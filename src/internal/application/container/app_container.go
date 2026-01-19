@@ -23,7 +23,7 @@ type AppContainer struct {
 	UpdateStatusPeopleUseCase *people.UpdateStatusPeopleUseCase
 }
 
-func NewAppContainer(mongoUrl string) *AppContainer {
+func NewAppContainer(mongoUrl string, cityApiUrl string) *AppContainer {
 	// Mongo
 	mongo := mongo_db.NewMongoConfig(mongoUrl)
 	if err := mongo.Connect(); err != nil {
@@ -36,7 +36,7 @@ func NewAppContainer(mongoUrl string) *AppContainer {
 	peopleRepo := mongo_db.NewMongoPeoplePersistence(mongo.GetDatabase())
 
 	// Services
-	cityService := city.NewRandomCityApi()
+	cityService := city.NewRandomCityApi(cityApiUrl)
 
 	// Use cases
 	createPeopleUseCase := people.NewPeopleUseCase(peopleRepo, cityService)

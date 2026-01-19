@@ -15,9 +15,9 @@ type RandomCityApi struct {
 	url string
 }
 
-func NewRandomCityApi() *RandomCityApi {
+func NewRandomCityApi(url string) *RandomCityApi {
 	return &RandomCityApi{
-		url: "https://random-city-api.vercel.app/api/random-city",
+		url: url,
 	}
 }
 
