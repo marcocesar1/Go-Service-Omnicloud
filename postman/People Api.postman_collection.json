@@ -1,0 +1,179 @@
+{
+  "info": {
+    "_postman_id": "8324518c-7ff7-45ae-ad72-a06afea99ac3",
+    "name": "People Api",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "4362755"
+  },
+  "item": [
+    {
+      "name": "Home",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://167.172.211.101",
+          "protocol": "http",
+          "host": [
+            "167",
+            "172",
+            "211",
+            "101"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Health",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://167.172.211.101/health",
+          "protocol": "http",
+          "host": [
+            "167",
+            "172",
+            "211",
+            "101"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Find",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://167.172.211.101/people?status=IN",
+          "protocol": "http",
+          "host": [
+            "167",
+            "172",
+            "211",
+            "101"
+          ],
+          "path": [
+            "people"
+          ],
+          "query": [
+            {
+              "key": "status",
+              "value": "IN",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Find one",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://167.172.211.101/people/696effda98dc4d12342d3723",
+          "protocol": "http",
+          "host": [
+            "167",
+            "172",
+            "211",
+            "101"
+          ],
+          "path": [
+            "people",
+            "696effda98dc4d12342d3723"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"Test 6\",\n    \"email\": \"test6@test.com\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://167.172.211.101/people",
+          "protocol": "http",
+          "host": [
+            "167",
+            "172",
+            "211",
+            "101"
+          ],
+          "path": [
+            "people"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Patch",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"status\": \"IN\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://167.172.211.101/people/696f9305c9d87abb565ad861/status",
+          "protocol": "http",
+          "host": [
+            "167",
+            "172",
+            "211",
+            "101"
+          ],
+          "path": [
+            "people",
+            "696f9305c9d87abb565ad861",
+            "status"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
