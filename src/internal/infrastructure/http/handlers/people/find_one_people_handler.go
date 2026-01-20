@@ -17,6 +17,12 @@ func (p *PeopleHandlers) FindOne(usecase *people.GetOnePeopleUseCase) func(w htt
 
 		people, err := usecase.Execute(id)
 		if err != nil {
+			if errors.Is(err, domain_err.ErrInvalidObjectId) {
+				message := fmt.Sprintf("invalid object id: %s", id)
+				responses.ErrorResponse(w, message, http.StatusBadRequest)
+				return
+			}
+
 			if errors.Is(err, domain_err.ErrNotFound) {
 				message := fmt.Sprintf("people with id %s not found", id)
 				responses.ErrorResponse(w, message, http.StatusNotFound)
