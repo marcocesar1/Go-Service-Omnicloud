@@ -10,11 +10,11 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     go build -o app ./src/cmd/main.go
 
-FROM alpine:latest
+# FROM alpine:latest
 
-WORKDIR /app
+# WORKDIR /app
 
-COPY --from=builder /app/app .
+# COPY --from=builder /app/app .
 
 EXPOSE 3000
 
