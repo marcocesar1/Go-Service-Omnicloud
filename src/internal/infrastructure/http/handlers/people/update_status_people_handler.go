@@ -27,6 +27,12 @@ func (p *PeopleHandlers) PatchStatus(usecase *people.UpdateStatusPeopleUseCase) 
 
 		peopleUpd, err := usecase.Execute(id, people.Status)
 		if err != nil {
+			if errors.Is(err, domain_err.ErrInvalidObjectId) {
+				message := fmt.Sprintf("invalid object id: %s", id)
+				responses.ErrorResponse(w, message, http.StatusBadRequest)
+				return
+			}
+
 			if errors.Is(err, domain_err.ErrNotFound) {
 				message := fmt.Sprintf("people with id %s not found", id)
 				responses.ErrorResponse(w, message, http.StatusNotFound)

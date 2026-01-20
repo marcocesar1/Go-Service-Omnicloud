@@ -55,7 +55,8 @@ type PeopleRepositoryMock struct {
 func NewPeopleRepositoryMock() *PeopleRepositoryMock {
 
 	return &PeopleRepositoryMock{
-		People: PeopleData}
+		People: PeopleData,
+	}
 }
 
 func (pm *PeopleRepositoryMock) Create(people *models.People) error {
