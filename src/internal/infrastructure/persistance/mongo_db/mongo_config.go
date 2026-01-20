@@ -58,8 +58,29 @@ func (m *MongoConfig) CreateCollections() {
 	if err != nil {
 		log.Fatalf("Failed to create people collection: %v", err)
 	}
+
+	err = m.CreatePeopleIndexes()
+	if err != nil {
+		log.Fatalf("Failed to create people indexes: %v", err)
+	}
 }
 
 func (m *MongoConfig) GetDatabase() *mongo.Database {
 	return m.db
+}
+
+func (m *MongoConfig) CreatePeopleIndexes() error {
+	collection := m.db.Collection("people")
+
+	indexModel := mongo.IndexModel{
+		Keys: bson.D{
+			{Key: "email", Value: 1},
+		},
+		Options: options.Index().
+			SetUnique(true).
+			SetName("unique_email"),
+	}
+
+	_, err := collection.Indexes().CreateOne(context.TODO(), indexModel)
+	return err
 }

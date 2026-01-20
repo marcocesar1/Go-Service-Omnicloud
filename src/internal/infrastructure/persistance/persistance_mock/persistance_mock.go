@@ -55,7 +55,7 @@ type PeopleRepositoryMock struct {
 func NewPeopleRepositoryMock() *PeopleRepositoryMock {
 
 	return &PeopleRepositoryMock{
-		People: PeopleData,
+		People: clonePeopleData(),
 	}
 }
 
@@ -134,5 +134,11 @@ func (pm *PeopleRepositoryMock) Update(person *models.People) error {
 }
 
 func (pm *PeopleRepositoryMock) Reset() {
-	pm.People = PeopleData
+	pm.People = clonePeopleData()
+}
+
+func clonePeopleData() []models.People {
+	cloned := make([]models.People, len(PeopleData))
+	copy(cloned, PeopleData)
+	return cloned
 }

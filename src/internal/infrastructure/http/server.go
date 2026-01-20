@@ -14,12 +14,14 @@ import (
 type Server struct {
 	router       *chi.Mux
 	appContainer *container.AppContainer
+	port         string
 }
 
-func NewServer(app *container.AppContainer) *Server {
+func NewServer(app *container.AppContainer, port string) *Server {
 	return &Server{
 		appContainer: app,
 		router:       chi.NewRouter(),
+		port:         port,
 	}
 }
 
@@ -39,7 +41,7 @@ func (s *Server) Start() {
 	s.router.Mount("/", defaultRoutes.LoadRoutes())
 	s.router.Mount("/people", peopleRoutes.LoadRoutes())
 
-	fmt.Println("Server running on: http://localhost:3000")
+	fmt.Println("Server running on: http://localhost:" + s.port)
 
 	http.ListenAndServe(":3000", s.router)
 }

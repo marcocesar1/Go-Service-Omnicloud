@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -10,17 +9,15 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	_ = godotenv.Load()
 
 	mongoUrl := os.Getenv("MONGO_URL")
 	cityApiUrl := os.Getenv("CITY_API_URL")
+	appPort := os.Getenv("APP_PORT")
 
 	app := container.NewAppContainer(mongoUrl, cityApiUrl)
 	defer app.Close()
 
-	server := http.NewServer(app)
+	server := http.NewServer(app, appPort)
 	server.Start()
 }

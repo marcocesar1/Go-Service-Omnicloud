@@ -101,9 +101,11 @@ func TestUpdateStatusPeopleHandler_ValidationErrors(t *testing.T) {
 			statusCode: http.StatusBadRequest,
 		},
 		{
-			name:       "status is the same to current status",
-			id:         persistance_mock.TEST_ID1,
-			people:     &models.People{Status: models.StatusOut},
+			name: "status is the same to current status",
+			id:   persistance_mock.TEST_ID1,
+			people: &models.People{
+				Status: models.StatusOut,
+			},
 			statusCode: http.StatusConflict,
 		},
 	}
@@ -111,6 +113,7 @@ func TestUpdateStatusPeopleHandler_ValidationErrors(t *testing.T) {
 	for _, testItem := range tests {
 		t.Run(testItem.name, func(t *testing.T) {
 			peopleRepository := persistance_mock.NewPeopleRepositoryMock()
+			peopleRepository.Reset()
 
 			usecase := people.NewPeopleUpdateStatusUseCase(peopleRepository)
 			handler := (&PeopleHandlers{}).PatchStatus(usecase)
@@ -120,6 +123,7 @@ func TestUpdateStatusPeopleHandler_ValidationErrors(t *testing.T) {
 			if respRecorder.Code != testItem.statusCode {
 				t.Fatalf("expected status %d, got %d", testItem.statusCode, respRecorder.Code)
 			}
+
 		})
 	}
 }
